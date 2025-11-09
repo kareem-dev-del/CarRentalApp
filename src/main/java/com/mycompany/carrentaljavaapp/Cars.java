@@ -12,7 +12,7 @@ import javax.swing.table.*;
 import java.awt.*;
 
 public class Cars extends BaseFrame {
-
+    // Kareem
     private JTable jTable1;
     private JTextField regName, brand, model, price, searchField;
     private JButton addBtn, editBtn, deleteBtn, clearBtn;
