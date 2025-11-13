@@ -1,6 +1,10 @@
 package utils.UIHelper;
 
 import com.formdev.flatlaf.FlatIntelliJLaf;
+//import com.mycompany.carrentaljavaapp.Cars;
+import com.mycompany.carrentaljavaapp.Login;
+import com.mycompany.carrentaljavaapp.Rents;
+
 import javax.swing.*;
 import java.awt.*;
 import java.util.Objects;
@@ -24,7 +28,8 @@ public abstract class BaseFrame extends JFrame {
 
         // 🟡 إضافة أيقونة للنافذة
         try {
-            Image icon = new ImageIcon(Objects.requireNonNull(getClass().getResource("/images/logo.png"))).getImage();
+            // ملاحظة: تم تغيير مسار الصورة بناءً على مثالك، يجب التأكد من وجودها
+            Image icon = new ImageIcon(Objects.requireNonNull(getClass().getResource("/resources/icons/logo.png"))).getImage();
             setIconImage(icon);
         } catch (Exception e) {
             System.err.println("⚠ Icon not found: " + e.getMessage());
@@ -47,40 +52,58 @@ public abstract class BaseFrame extends JFrame {
         sidebar.setBorder(BorderFactory.createEmptyBorder(30, 0, 30, 0));
 
         // Logo
-        logo = new JLabel("Car Rentals", SwingConstants.CENTER);
+        logo = new JLabel("RENT MASTER", SwingConstants.CENTER); // تغيير الاسم ليكون أوضح
         logo.setFont(AppTheme.HEADER_FONT.deriveFont(26f));
-        logo.setForeground(AppTheme.SIDEBAR_TEXT_ACTIVE);
+        logo.setForeground(AppTheme.ACCENT_GOLD_SUBTLE); // استخدام لون accent مناسب
         logo.setAlignmentX(Component.CENTER_ALIGNMENT);
         logo.setBorder(BorderFactory.createEmptyBorder(0, 0, 40, 0));
         sidebar.add(logo);
 
-        // Navigation Items
-        JPanel carsNavItem = StyleUtils.createNavItem("Vehicles", activePage.equals("Vehicles"));
-        JPanel rentalsNavItem = StyleUtils.createNavItem("Rentals", activePage.equals("Rentals"));
-        JPanel customersNavItem = StyleUtils.createNavItem("Customers", activePage.equals("Customers"));
+        // --- Navigation Links (باستخدام الدالة الجديدة) ---
 
-        carsNavItem.setAlignmentX(Component.CENTER_ALIGNMENT);
-        rentalsNavItem.setAlignmentX(Component.CENTER_ALIGNMENT);
-        customersNavItem.setAlignmentX(Component.CENTER_ALIGNMENT);
+        // 1. Vehicles/Cars Link
+        sidebar.add(StyleUtils.createSidebarLink("Vehicles 🚗", () -> {
+           // new Cars().setVisible(true);
+            this.dispose();
+        }, activePage.equals("Vehicles")));
+        sidebar.add(Box.createVerticalStrut(5));
 
-        sidebar.add(carsNavItem);
-        sidebar.add(rentalsNavItem);
-        sidebar.add(customersNavItem);
+        // 2. Rentals Link
+        sidebar.add(StyleUtils.createSidebarLink("Rentals 📝", () -> {
+            new Rents().setVisible(true);
+            this.dispose();
+        }, activePage.equals("Rentals")));
+        sidebar.add(Box.createVerticalStrut(5));
+
+        // 3. Customers Link (يفترض وجود صفحة Customers)
+        sidebar.add(StyleUtils.createSidebarLink("Customers 🧑‍🤝‍🧑", () -> {
+            // new Customers().setVisible(true); // إذا كانت موجودة
+            JOptionPane.showMessageDialog(this, "Customers page not implemented yet!", "Info", JOptionPane.INFORMATION_MESSAGE);
+        }, activePage.equals("Customers")));
+        sidebar.add(Box.createVerticalStrut(5));
+
 
         sidebar.add(Box.createVerticalGlue());
 
-        // Logout Button
-        logoutBtn = StyleUtils.createSidebarButton("Logout");
-        logoutBtn.addActionListener(e -> {
+        // --- Logout Link (باستخدام نفس دالة الروابط) ---
+
+        // يجب أن تكون الدالة التي تدعم الـ action هي المستخدمة
+        Component logoutLink = StyleUtils.createSidebarLink("Logout 🚪", () -> {
             int confirm = JOptionPane.showConfirmDialog(
                     this, "Are you sure you want to logout?", "Confirm Logout",
                     JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE
             );
-            if (confirm == JOptionPane.YES_OPTION) dispose();
-        });
+            if (confirm == JOptionPane.YES_OPTION) {
+                new Login().setVisible(true);
+                this.dispose();
+            }
+        }, false); // دائماً false لعدم تفعيل لون النشط
+
+        // نغير طريقة إضافة زر الـ Logout ليتناسب مع تصميم الروابط الجديدة
+        logoutLink.getAlignmentX(); // تأكد من المحاذاة
 
         sidebar.add(Box.createVerticalStrut(20));
-        sidebar.add(logoutBtn);
+        sidebar.add(logoutLink);
         sidebar.add(Box.createVerticalStrut(30));
     }
 

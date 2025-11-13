@@ -1,9 +1,11 @@
 package utils.UIHelper;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import javax.swing.border.Border;
+import javax.swing.border.EmptyBorder;
 
 /**
  * StyleUtils: Contains reusable static methods for creating styled components.
@@ -11,162 +13,57 @@ import javax.swing.border.Border;
 @SuppressWarnings("unused")
 public class StyleUtils {
 
-    /**
-     * Creates a standard styled JTextField with rounded border.
-     */
-    public static JTextField createStyledTextField() {
-        JTextField f = new JTextField();
-        f.setBackground(AppTheme.FIELD_BACKGROUND_WHITE);
-        f.setForeground(new Color(40, 40, 40));
-        f.setFont(AppTheme.FIELD_FONT);
-        f.setPreferredSize(AppTheme.FIELD_DIMENSION);
+    // 1. ✅ دالة إنشاء رابط جانبي احترافي (Sidebar Link)
+    public static Component createSidebarLink(String text, Runnable action, boolean isActive) {
+        // نستخدم JLabel لتكون رابطًا (Link)
+        JLabel linkLabel = new JLabel(text);
 
-        // Compound Border: Line Border (with rounding hint) + Padding
-        Border lineBorder = BorderFactory.createLineBorder(AppTheme.FIELD_BORDER_GRAY, 1, true);
-        Border padding = BorderFactory.createEmptyBorder(6, 10, 6, 10);
-        f.setBorder(BorderFactory.createCompoundBorder(lineBorder, padding));
-        return f;
-    }
+        // استخدام خط الشريط الجانبي (يفضل استخدامه هنا بدلًا من BUTTON_FONT)
+        linkLabel.setFont(AppTheme.SIDEBAR_FONT);
 
-    /**
-     * Creates a JPanel containing a label and a field stacked vertically.
-     */
-    public static JPanel createLabelFieldPanel(String labelText, JTextField field) {
-        JPanel panel = new JPanel(new BorderLayout(0, 5));
-        panel.setBackground(AppTheme.FIELD_BACKGROUND_WHITE);
-
-        JLabel label = new JLabel(labelText);
-        label.setFont(AppTheme.LABEL_FONT);
-        label.setForeground(AppTheme.SIDEBAR_BG_DARK); // Using dark sidebar color for form labels
-
-        panel.add(label, BorderLayout.NORTH);
-        panel.add(field, BorderLayout.CENTER);
-        return panel;
-    }
-
-    /**
-     * Creates a fully styled JButton with hover effect.
-     */
-    public static JButton createActionStyledButton(String text, Color base, Color hover) {
-        JButton btn = new JButton(text);
-        btn.setBackground(base);
-        btn.setForeground(Color.WHITE);
-        btn.setFont(AppTheme.BUTTON_FONT);
-        btn.setFocusPainted(false);
-        btn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-
-        // Padding Border
-        btn.setBorder(BorderFactory.createEmptyBorder(10, 25, 10, 25));
-        btn.setRolloverEnabled(true);
-
-        btn.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseEntered(MouseEvent e) {
-                btn.setBackground(hover);
-            }
-
-            @Override
-            public void mouseExited(MouseEvent e) {
-                btn.setBackground(base);
-            }
-        });
-        return btn;
-    }
-
-    /**
-     * Creates a styled sidebar navigation item with active/hover states.
-     * @param text The item text.
-     * @param isActive Boolean flag to determine the active state.
-     */
-    public static JPanel createNavItem(String text, boolean isActive) {
+        // الألوان والخلفية
         Color bgColor = isActive ? AppTheme.SIDEBAR_ACTIVE_BLUE : AppTheme.SIDEBAR_BG_DARK;
-        Color textColor = isActive ? AppTheme.SIDEBAR_TEXT_ACTIVE : AppTheme.SIDEBAR_TEXT_DEFAULT;
+        Color fgColor = isActive ? AppTheme.SIDEBAR_TEXT_ACTIVE : AppTheme.SIDEBAR_TEXT_DEFAULT;
         Color hoverColor = AppTheme.SIDEBAR_HOVER_BG;
 
-        JPanel item = new JPanel();
-        item.setLayout(new BoxLayout(item, BoxLayout.X_AXIS));
-        item.setBackground(bgColor);
-        item.setBorder(BorderFactory.createEmptyBorder(10, 18, 10, 18));
-        item.setMaximumSize(new Dimension(220, 45)); // 👈 تحديد عرض العنصر
+        linkLabel.setForeground(fgColor);
+        linkLabel.setOpaque(true);
+        linkLabel.setBackground(bgColor);
+        linkLabel.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
+        linkLabel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        linkLabel.setHorizontalAlignment(SwingConstants.LEFT);
 
-        if (isActive) {
-            JPanel activeBar = new JPanel();
-            activeBar.setPreferredSize(new Dimension(3, 0));
-            activeBar.setMaximumSize(new Dimension(3, Integer.MAX_VALUE));
-            activeBar.setBackground(AppTheme.ACCENT_GOLD_SUBTLE);
-            item.add(activeBar);
-            item.add(Box.createHorizontalStrut(10));
-        } else {
-            item.add(Box.createHorizontalStrut(15));
-        }
-
-        // حط النص داخل panel تاني بحيث hover ما يتمدش على المسافة الفاضية
-        JPanel textPanel = new JPanel();
-        textPanel.setOpaque(false);
-        textPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
-
-        JLabel label = new JLabel(text);
-        label.setFont(AppTheme.NAV_FONT);
-        label.setForeground(textColor);
-        textPanel.add(label);
-
-        item.add(textPanel);
-
-        // Hover محسّن
-        item.addMouseListener(new MouseAdapter() {
+        // Hover effect
+        linkLabel.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseEntered(MouseEvent e) {
                 if (!isActive) {
-                    item.setBackground(hoverColor);
-                    item.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+                    linkLabel.setBackground(hoverColor);
                 }
             }
 
             @Override
             public void mouseExited(MouseEvent e) {
-                if (!isActive) item.setBackground(bgColor);
+                if (!isActive) {
+                    linkLabel.setBackground(bgColor);
+                }
+            }
+
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (action != null) action.run();
             }
         });
 
-        return item;
+        // لتنسيق BoxLayout بشكل أفضل
+        linkLabel.setMaximumSize(new Dimension(220, 45));
+        linkLabel.setAlignmentX(Component.LEFT_ALIGNMENT); // مهم للمحاذاة في BaseFrame
+
+        return linkLabel;
     }
 
-
-
-    /**
-     * Creates a styled sidebar button (e.g., Logout) with hover effect.
-     */
-    public static JButton createSidebarButton(String text) {
-        JButton btn = new JButton(text);
-        Color fg = AppTheme.SIDEBAR_TEXT_ACTIVE;
-        Color base = AppTheme.SIDEBAR_BG_DARK;
-        Color hover = AppTheme.SIDEBAR_HOVER_BG;
-
-        btn.setBackground(base);
-        btn.setForeground(fg);
-        btn.setFocusPainted(false);
-        btn.setFont(AppTheme.BUTTON_FONT);
-        btn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-
-        // Compound border for professional look
-        Border line = BorderFactory.createLineBorder(fg.darker(), 1, true);
-        Border padding = BorderFactory.createEmptyBorder(10, 20, 10, 20);
-        btn.setBorder(BorderFactory.createCompoundBorder(line, padding));
-        btn.setAlignmentX(Component.CENTER_ALIGNMENT);
-
-        btn.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseEntered(MouseEvent e) {
-                btn.setBackground(hover);
-            }
-            @Override
-            public void mouseExited(MouseEvent e) {
-                btn.setBackground(base);
-            }
-        });
-        return btn;
-    }
-
+    // 2. ✅ دالة تطبيق تنسيق موحد لحقول الإدخال (المستخدمة في Rents و Cars)
+    // نعتمد على هذه الدالة بدلاً من createStyledTextField القديمة
     public static void applyTextFieldStyle(JTextField field) {
         field.setFont(AppTheme.FIELD_FONT);
         field.setBorder(BorderFactory.createCompoundBorder(
@@ -176,4 +73,43 @@ public class StyleUtils {
         field.setBackground(AppTheme.FIELD_BACKGROUND_WHITE);
     }
 
+    // 3. ✅ دالة إنشاء لوحة التسمية والحقل (مستخدمة في Rents و Cars)
+    public static JPanel createLabelFieldPanel(String labelText, JTextField field) {
+        JPanel panel = new JPanel(new BorderLayout(0, 5));
+        panel.setBackground(AppTheme.FIELD_BACKGROUND_WHITE);
+
+        JLabel label = new JLabel(labelText);
+        label.setFont(AppTheme.LABEL_FONT);
+        // نستخدم لون نص داكن عام بدلاً من SIDEBAR_BG_DARK
+        label.setForeground(AppTheme.TEXT_DARK);
+        panel.add(label, BorderLayout.NORTH);
+        panel.add(field, BorderLayout.CENTER);
+        return panel;
+    }
+
+    // 4. ✅ دالة إنشاء زر الأكشن (مستخدمة في Rents و Cars)
+    public static JButton createActionStyledButton(String text, Color base, Color hover) {
+        JButton btn = new JButton(text);
+        btn.setBackground(base);
+        btn.setForeground(Color.WHITE);
+        btn.setFont(AppTheme.BUTTON_FONT);
+        btn.setFocusPainted(false);
+        btn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        btn.setBorder(BorderFactory.createEmptyBorder(10, 25, 10, 25));
+        btn.setRolloverEnabled(true);
+        btn.setPreferredSize(new Dimension(150, 45)); // تحديد حجم ثابت للأزرار
+
+        btn.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) { btn.setBackground(hover); }
+            @Override
+            public void mouseExited(MouseEvent e) { btn.setBackground(base); }
+        });
+        return btn;
+    }
+
+    // ⛔ الدوال التالية محذوفة لأنها مكررة أو غير مستخدمة:
+    // 1. createStyledTextField: تم دمج وظيفته في applyTextFieldStyle
+    // 2. createNavItem: تم استبدالها بدالة createSidebarLink
+    // 3. createSidebarButton: تم استبدالها بدالة createSidebarLink
 }

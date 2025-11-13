@@ -24,14 +24,13 @@ public class Login extends BaseFrame {
 
     private Image backgroundImage;
 
-    // الألوان المُحسنة:
-    private static final Color ACCENT_COLOR = new Color(0, 150, 255); // الأزرق الأساسي للزر
-    // تم تغيير هذا اللون ليتناسب مع LINK_COLOR للمظهر المتوهج
-    private static final Color TITLE_COLOR = new Color(77, 195, 255);
-    private static final Color FIELD_BG = new Color(65, 68, 70); // خلفية أغمق قليلاً للحقول
-    private static final Color LINK_COLOR = new Color(77, 195, 255); // اللون السماوي الفاتح
+    // 🎨 ألوان احترافية (مودرن ومتناغمة مع FlatDarcula)
+    private static final Color ACCENT_COLOR = new Color(0, 122, 255);      // أزرق احترافي (مثل macOS accent)
+    private static final Color TITLE_COLOR = new Color(0, 191, 255);       // أزرق سماوي جميل للعناوين
+    private static final Color FIELD_BG = new Color(55, 58, 60);           // رمادي داكن ناعم لحقول الإدخال
+    private static final Color LINK_COLOR = new Color(100, 200, 255);      // لون سماوي فاتح للرابط
 
-    // دالة تحميل الصورة
+    // تحميل الصورة
     private void loadBackgroundImage() {
         try {
             URL imageUrl = getClass().getResource("/resources/car_background.jpg");
@@ -49,9 +48,8 @@ public class Login extends BaseFrame {
         }
     }
 
-
     public Login() {
-        super("Car Rental Solutions","- Login");
+        super("Car Rental Solutions", "- Login");
         setTitle("Car Rental Solutions - Login");
         setSize(450, 600);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -61,7 +59,7 @@ public class Login extends BaseFrame {
         loadBackgroundImage();
         setLayout(new BorderLayout());
 
-        // ** 1. لوحة الخلفية (تحمل صورة السيارة) **
+        // لوحة الخلفية
         JPanel backgroundPanel = new JPanel() {
             @Override
             protected void paintComponent(Graphics g) {
@@ -69,21 +67,19 @@ public class Login extends BaseFrame {
                 if (backgroundImage != null) {
                     g.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), this);
                 } else {
-                    setBackground(new Color(45, 45, 45));
+                    setBackground(new Color(40, 40, 40));
                 }
             }
         };
         backgroundPanel.setLayout(new GridBagLayout());
         add(backgroundPanel, BorderLayout.CENTER);
 
-        // ** 2. لوحة المحتوى (تأثير الزجاج الداكن) **
+        // لوحة المحتوى الشفافة
         contentPanel = new JPanel() {
             @Override
             protected void paintComponent(Graphics g) {
                 Graphics2D g2 = (Graphics2D) g.create();
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-
-                // رسم خلفية شبه شفافة مع زوايا مستديرة
                 g2.setColor(new Color(0, 0, 0, 160));
                 g2.fillRoundRect(0, 0, getWidth(), getHeight(), 20, 20);
                 g2.dispose();
@@ -93,8 +89,6 @@ public class Login extends BaseFrame {
         contentPanel.setLayout(null);
         contentPanel.setOpaque(false);
         contentPanel.setPreferredSize(new Dimension(350, 490));
-
-        // ** إضافة حدود خفيفة لتعزيز تأثير الإطار **
         contentPanel.setBorder(BorderFactory.createLineBorder(new Color(255, 255, 255, 30)));
 
         GridBagConstraints gbc = new GridBagConstraints();
@@ -105,11 +99,10 @@ public class Login extends BaseFrame {
         gbc.anchor = GridBagConstraints.CENTER;
         backgroundPanel.add(contentPanel, gbc);
 
-
-        // العنوان "CAR RENTAL SOLUTIONS" - تم تصحيح الخطأ هنا
+        // العنوان
         titleLabel = new JLabel("CAR RENTAL SOLUTIONS");
-        titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 25)); // تم إزالة علامات النجمة
-        titleLabel.setForeground(TITLE_COLOR); // تم إزالة علامات النجمة
+        titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 25));
+        titleLabel.setForeground(TITLE_COLOR);
         titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
         titleLabel.setBounds(0, 30, 350, 40);
         contentPanel.add(titleLabel);
@@ -125,7 +118,7 @@ public class Login extends BaseFrame {
             System.err.println("Could not load car icon: " + e.getMessage());
         }
 
-        // اسم المستخدم والحقول
+        // اسم المستخدم
         usernameLabel = new JLabel("USERNAME:");
         usernameLabel.setFont(new Font("Segoe UI", Font.PLAIN, 18));
         usernameLabel.setForeground(Color.WHITE);
@@ -157,7 +150,7 @@ public class Login extends BaseFrame {
         passwordField.setCaretColor(Color.WHITE);
         contentPanel.add(passwordField);
 
-        // زر اللوجن
+        // زر الدخول
         loginButton = new JButton("LOGIN");
         loginButton.putClientProperty("JButton.buttonType", "roundRect");
         loginButton.setFont(new Font("Segoe UI", Font.BOLD, 20));
@@ -186,7 +179,7 @@ public class Login extends BaseFrame {
         createAccountButton.setBounds(175, 450, 150, 20);
         contentPanel.add(createAccountButton);
 
-        // إضافة Action Listeners
+        // الأحداث
         loginButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -195,18 +188,19 @@ public class Login extends BaseFrame {
 
                 if (username.equals("kareem") && password.equals("12345")) {
                     JOptionPane.showMessageDialog(Login.this, "Login Successful!", "Success", JOptionPane.INFORMATION_MESSAGE);
-                    new Cars().setVisible(true);
+                   // new Cars().setVisible(true);
                     new Login().dispose();
                 } else {
                     JOptionPane.showMessageDialog(Login.this, "Invalid Username or Password", "Login Error", JOptionPane.ERROR_MESSAGE);
                 }
             }
-
-
         });
 
-        forgotPasswordButton.addActionListener(e -> JOptionPane.showMessageDialog(Login.this, "Redirecting to Forgot Password page...", "Info", JOptionPane.INFORMATION_MESSAGE));
-        createAccountButton.addActionListener(e -> JOptionPane.showMessageDialog(Login.this, "Redirecting to Create New Account page...", "Info", JOptionPane.INFORMATION_MESSAGE));
+        forgotPasswordButton.addActionListener(e ->
+                JOptionPane.showMessageDialog(Login.this, "Redirecting to Forgot Password page...", "Info", JOptionPane.INFORMATION_MESSAGE));
+
+        createAccountButton.addActionListener(e ->
+                JOptionPane.showMessageDialog(Login.this, "Redirecting to Create New Account page...", "Info", JOptionPane.INFORMATION_MESSAGE));
     }
 
     public static void main(String[] args) {

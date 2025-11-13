@@ -368,7 +368,7 @@ public class Customers extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jLabel5MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel5MouseClicked
-        new Cars().setVisible(true);
+     //   new Cars().setVisible(true);
             this.dispose();
     }//GEN-LAST:event_jLabel5MouseClicked
 
